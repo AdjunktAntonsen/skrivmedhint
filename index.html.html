@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <title>Skriv ordet!</title>
+  <style>
+    :root { --primary-color: #2a9d8f; --secondary-color: #264653; --accent-color: #e9c46a; --bg-color: #f9f9f9; --text-color: #333; --card-bg: #fff; --border-radius: 8px; --spacing: 1rem; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; min-height: 100vh; }
+    .container { max-width: 800px; width: 100%; margin: auto; padding: var(--spacing); }
+    h1 { text-align: center; font-size: 2.5rem; color: var(--secondary-color); cursor: pointer; margin-bottom: var(--spacing); }
+    #controls { display: flex; gap: var(--spacing); justify-content: center; margin-bottom: var(--spacing); }
+    button { background: var(--primary-color); border: none; color: #fff; padding: 0.75rem 1rem; border-radius: var(--border-radius); cursor: pointer; font-size: 1rem; }
+    button:hover { background: var(--secondary-color); }
+    input[type="text"] { flex: 1; padding: 0.5rem; font-size: 1rem; border: 1px solid #ccc; border-radius: var(--border-radius); }
+    #hint-container, #correct-container, #celebration, #score { text-align: center; margin: var(--spacing) 0; }
+    #hint-label, #correct-label { font-size: 1.2rem; font-weight: bold; color: var(--secondary-color); }
+    #hint, #correct-answer { font-size: 1.4rem; font-weight: bold; color: var(--primary-color); }
+    #celebration { font-size: 1.8rem; color: var(--accent-color); cursor: pointer; min-height: 2.5rem; }
+    #score { font-size: 1.6rem; font-weight: bold; background: var(--card-bg); padding: 0.5rem; border-radius: var(--border-radius); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+    #score span { min-width: 3rem; display: inline-block; color: var(--primary-color); }
+    #bottom { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing); }
+    .column { background: var(--card-bg); border-radius: var(--border-radius); padding: var(--spacing); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+    .column h2 { margin-bottom: var(--spacing); color: var(--secondary-color); font-size: 1.3rem; }
+    #timer { font-size: 2.2rem; font-weight: bold; }
+    #highscore-list { list-style: none; padding: 0; }
+    #highscore-list li { display: flex; justify-content: space-between; font-size: 1rem; padding: 0.25rem 0; }
+    footer { text-align: center; margin-top: auto; padding: var(--spacing); color: #777; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 id="title">Skriv ordet!</h1>
+    <div id="controls">
+      <button id="playBtn">🔊</button>
+      <input type="text" id="answer" placeholder="Skriv ordet her" autocomplete="off" />
+      <button id="submitBtn">Sjekk</button>
+    </div>
+    <div id="hint-container">
+      <div id="hint-label">Hint</div>
+      <div id="hint">--</div>
+    </div>
+    <div id="correct-container" style="display:none;">
+      <div id="correct-label">Riktig ord</div>
+      <div id="correct-answer"></div>
+    </div>
+    <div id="celebration"></div>
+    <div id="score">Elev: <span id="studentScore">0</span> — Digitalette: <span id="botScore">0</span></div>
+    <div id="bottom">
+      <div class="column">
+        <h2>HighScore!</h2>
+        <ul id="highscore-list"></ul>
+      </div>
+      <div class="column">
+        <h2>Timer</h2>
+        <div id="timer">05:00</div>
+      </div>
+    </div>
+  </div>
+  <footer>© 2025 Digitalette. Alle rettigheter reservert.</footer>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const words = [
+        "og","i","det","på","som","er","en","til","å","han",
+        "av","for","med","at","var","de","ikke","den","har","jeg",
+        "om","et","men","så","seg","hun","hadde","fra","vi","du",
+        "kan","da","ble","ut","skal","vil","ham","etter","over","ved",
+        "også","bare","eller","sa","nå","dette","noe","være","meg","mot",
+        "opp","der","når","inn","dem","kunne","andre","blir","alle","noen",
+        "sin","ha","år","henne","må","selv","sier","få","kom","denne",
+        "enn","to","hans","bli","ville","før","vært","skulle","går","her",
+        "slik","gikk","mer","hva","igjen","fikk","man","alt","mange","ingen",
+        "får","oss","hvor","under","siden","hele","dag","gang","sammen","ned",
+        "kommer","sine","deg","se","første","godt","mellom","måtte","gå","helt",
+        "litt","nok","store","aldri","ta","sig","uten","kanskje","blitt","ser",
+        "hvis","bergen","sitt","jo","vel","si","vet","hennes","min","tre",
+        "ja","samme","mye","nye","tok","gjøre","disse","siste","tid","rundt",
+        "tilbake","mens","satt","flere","folk","fordi","både","la","gjennom","fått",
+        "like","nei","annet","komme","kroner","gjorde","hvordan","norge","norske","gjør",
+        "oslo","står","stor","gamle","langt","annen","sett","først","mener","hver",
+        "barn","rett","ny","tatt","derfor","fram","hos","heller","lenge","alltid",
+        "tror","nesten","mann","gi","god","lå","blant","norsk","visste","bak",
+        "tar","liv","mennesker","frem","bort","verden","deres","tiden","del","vår",
+        "mest","eneste","likevel","hatt","dei","tidligere","fire","liten","tenkte","hverandre",
+        "holdt","bedre","meget","ting","lite","stod","ei","hvert","begynte","gir",
+        "ligger","grunn","dere","livet","sagt","land","kommet","neste","far","egen",
+        "side","gått","mor","ute","videre","millioner","prosent","svarte","sto","begge",
+        "allerede","inne","finne","enda","hjem","foran","måte","mannen","dagen","hodet",
+        "saken","ganger","kjente","stort","blev","mindre","landet","byen","plass","kveld",
+        "ord","øynene","fem","større","gode","nu","synes","beste","kvinner","ett",
+        "satte","hvem","all","klart","holde","ofte","stille","spurte","lenger","sted","dager"
+      ];
+
+      let currentWord = '';
+      let studentScore = 0, botScore = 0;
+      let timeRemaining = 300, wordCount = 0;
+      let answered = false, gameStarted = false;
+      let highscores = [], timerInterval;
+
+      const playBtn = document.getElementById('playBtn');
+      const submitBtn = document.getElementById('submitBtn');
+      const answerInput = document.getElementById('answer');
+      const hintEl = document.getElementById('hint');
+      const correctContainer = document.getElementById('correct-container');
+      const correctAnswerEl = document.getElementById('correct-answer');
+      const celebrationEl = document.getElementById('celebration');
+      const studentScoreEl = document.getElementById('studentScore');
+      const botScoreEl = document.getElementById('botScore');
+      const timerEl = document.getElementById('timer');
+      const highscoreListEl = document.getElementById('highscore-list');
+      const titleEl = document.getElementById('title');
+
+      function loadVoice() {
+        return speechSynthesis.getVoices().filter(v => v.lang==='nb-NO').find(v=>/female/i.test(v.name)) || null;
+      }
+      let selectedVoice = null;
+      speechSynthesis.onvoiceschanged = () => { selectedVoice = loadVoice(); };
+
+      function speak(text) {
+        if (!selectedVoice) selectedVoice = loadVoice();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang='nb-NO'; 
+        u.rate=0.7; 
+        if (selectedVoice) u.voice=selectedVoice;
+        speechSynthesis.speak(u);
+      }
+
+      // NY FUNKSJON: leser både ordet og hintet (antall bokstaver)
+      function speakWordWithHint() {
+        if (!currentWord) return;
+        const len = currentWord.length;
+        const lenText = len === 1 ? '1 bokstav' : `${len} bokstaver`;
+        speak(`${currentWord}. ${lenText}.`);
+      }
+
+      function beep() { 
+        const ctx=new (window.AudioContext||window.webkitAudioContext)(); 
+        const osc=ctx.createOscillator(); 
+        osc.frequency.value=1000; 
+        osc.connect(ctx.destination); 
+        osc.start(); 
+        setTimeout(()=>{osc.stop();ctx.close();},100); 
+      }
+
+      function nextWord() {
+        answered=false; 
+        celebrationEl.textContent=''; 
+        correctContainer.style.display='none';
+        answerInput.value=''; 
+        wordCount++;
+        if (!words.length) return;
+        const pool = (wordCount%3===0)?words.filter(w=>w.length>=4):words;
+        if (!pool.length) return;
+        currentWord=pool[Math.floor(Math.random()*pool.length)];
+        // Oppdater synlig hint
+        hintEl.textContent=`${currentWord.length} bokstaver`;
+      }
+
+      function renderHighscores(){ 
+        highscores=Array.from({length:5},()=>({
+          name:['Ola','Kari','Espen','Lise','Per','Nora'][Math.floor(Math.random()*6)],
+          score:Math.floor(Math.random()*181)+20
+        })).sort((a,b)=>b.score-a.score); 
+
+        highscoreListEl.innerHTML=''; 
+        highscores.forEach(e=>{
+          const li=document.createElement('li');
+          li.textContent=e.name;
+          const span=document.createElement('span');
+          span.textContent=e.score;
+          li.appendChild(span);
+          highscoreListEl.appendChild(li);
+        }); 
+      }
+
+      function updateTimer(){
+        const m=String(Math.floor(timeRemaining/60)).padStart(2,'0');
+        const s=String(timeRemaining%60).padStart(2,'0');
+        timerEl.textContent=`${m}:${s}`;
+      }
+
+      function startGame(){
+        if(gameStarted) return;
+        gameStarted=true;
+        nextWord();
+        // Når spillet starter, les ord + hint
+        speakWordWithHint();
+      }  
+
+      function checkAnswer(){
+        if(!gameStarted||timeRemaining<=0||answered) return;
+        answered=true;
+        const guess=answerInput.value.trim().toLowerCase();
+
+        if (guess === currentWord) {
+          // Riktig svar
+          studentScore++;
+          studentScoreEl.textContent = studentScore;
+          celebrationEl.textContent = '🎉 Riktig!';
+          timeRemaining += 2;
+          updateTimer();
+          beep();
+
+          setTimeout(() => {
+            nextWord();
+            // Les nytt ord med hint
+            speakWordWithHint();
+          }, 700);
+        } else {
+          // Feil svar
+          botScore++;
+          botScoreEl.textContent = botScore;
+          celebrationEl.textContent = 'Feil - et poeng til meg!';
+          correctAnswerEl.textContent = currentWord;
+          correctContainer.style.display = 'block';
+          speak('Feil, et poeng til meg!');
+
+          setTimeout(() => {
+            nextWord();
+            // Les nytt ord med hint
+            speakWordWithHint();
+          }, 3000);
+        }
+
+        const lowest=highscores[4].score;
+        if(studentScore>lowest){
+          const name=prompt('Gratulerer! Du kom på HighScore. Skriv navnet ditt:')||'Spiller';
+          highscores.push({name,score:studentScore});
+          highscores.sort((a,b)=>b.score-a.score);
+          highscores.splice(5);
+          renderHighscores();
+        }
+      }  
+
+      function endGame(){
+        clearInterval(timerInterval);
+        celebrationEl.textContent='🎮 Bra spilt! Trykk her om du vil spille igjen';
+        celebrationEl.onclick=()=>{
+          studentScore=0;
+          botScore=0;
+          studentScoreEl.textContent='0';
+          botScoreEl.textContent='0';
+          timeRemaining=300;
+          updateTimer();
+          gameStarted=false;
+          startGame();
+        };
+      }
+
+      playBtn.addEventListener('click',()=>{
+        startGame();
+        // Les ord + hint når eleven trykker på høyttalerknappen
+        speakWordWithHint();
+        answerInput.focus();
+      });
+
+      submitBtn.addEventListener('click',checkAnswer);
+
+      answerInput.addEventListener('keydown',e=>{
+        if(e.key==='Enter'){
+          e.preventDefault();
+          checkAnswer();
+        }
+      });
+
+      titleEl.addEventListener('click',()=>{
+        studentScore=0;
+        botScore=0;
+        studentScoreEl.textContent='0';
+        botScoreEl.textContent='0';
+        timeRemaining=300;
+        updateTimer();
+        gameStarted=false;
+        startGame();
+      });
+
+      renderHighscores();
+      updateTimer();
+    });
+  </script>
+</body>
+</html>
