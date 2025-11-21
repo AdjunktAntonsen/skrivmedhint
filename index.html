@@ -4,32 +4,132 @@
   <meta charset="utf-8">
   <title>Skriv ordet!</title>
   <style>
-    :root { --primary-color: #2a9d8f; --secondary-color: #264653... #333; --card-bg: #fff; --border-radius: 8px; --spacing: 1rem; }
+    :root {
+      --primary-color: #2a9d8f;
+      --secondary-color: #264653;
+      --accent-color: #e9c46a;
+      --bg-color: #f9f9f9;
+      --text-color: #333;
+      --card-bg: #fff;
+      --border-radius: 8px;
+      --spacing: 1rem;
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', sans-serif; background: var(...or); display: flex; flex-direction: column; min-height: 100vh; }
-    .container { max-width: 800px; width: 100%; margin: auto; padding: var(--spacing); }
-    h1 { text-align: center; font-size: 2.5rem; color: var(--sec...ondary-color); cursor: pointer; margin-bottom: var(--spacing); }
-    #controls { display: flex; gap: var(--spacing); justify-content: center; margin-bottom: var(--spacing); }
-    button { background: var(--primary-color); border: none; col... 1rem; border-radius: var(--border-radius); cursor: pointer; fon
-t-size: 1rem; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 800px;
+      width: 100%;
+      margin: auto;
+      padding: var(--spacing);
+    }
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      color: var(--secondary-color);
+      cursor: pointer;
+      margin-bottom: var(--spacing);
+    }
+    #controls {
+      display: flex;
+      gap: var(--spacing);
+      justify-content: center;
+      margin-bottom: var(--spacing);
+    }
+    button {
+      background: var(--primary-color);
+      border: none;
+      color: #fff;
+      padding: 0.75rem 1rem;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 1rem;
+    }
     button:hover { background: var(--secondary-color); }
-    input[type="text"] { flex: 1; padding: 0.5rem; font-size: 1r...; border: 1px solid #ccc; border-radius: var(--border-radius); }
-    #hint-container, #correct-container, #celebration, #score { text-align: center; margin: var(--spacing) 0; }
-    #hint-label, #correct-label { font-size: 1.2rem; font-weight: bold; color: var(--secondary-color); }
-    #hint, #correct-answer { font-size: 1.4rem; font-weight: bold; color: var(--primary-color); }
-    #celebration { font-size: 1.8rem; color: var(--accent-color); cursor: pointer
-; min-height: 2.5rem; }
-    #score { font-size: 1.6rem; font-weight: bold; background: v...: var(--border-radius); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
-    #score span { min-width: 3rem; display: inline-block; color: var(--primary-color); }
-    #bottom { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing); }
-    .column { background: var(--card-bg); border-radius: var(--b...adding: var(--spacing); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
-    .column h2 { margin-bottom: var(--spacing); color: var(--secondary-color); font-size: 1.3rem; }
-    #timer { font-size: 2.2rem; font-weight: bold; }
-    #highscore-list { list-styl
-e: none; padding: 0; }
-    #highscore-list li { display: flex; justify-content: space-between; font-size: 1rem; padding: 0.25rem 0; }
-    footer { text-align: center; margin-top: auto; padding: var(--spacing); color: #777; font-size: 0.85rem; }
-  
+    input[type="text"] {
+      flex: 1;
+      padding: 0.5rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: var(--border-radius);
+    }
+    #hint-container, #correct-container, #celebration, #score {
+      text-align: center;
+      margin: var(--spacing) 0;
+    }
+    #hint-label, #correct-label {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: var(--secondary-color);
+    }
+    #hint, #correct-answer {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+    #celebration {
+      font-size: 1.8rem;
+      color: var(--accent-color);
+      cursor: pointer;
+      min-height: 2.5rem;
+    }
+    #score {
+      font-size: 1.6rem;
+      font-weight: bold;
+      background: var(--card-bg);
+      padding: 0.5rem;
+      border-radius: var(--border-radius);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+    #score span {
+      min-width: 3rem;
+      display: inline-block;
+      color: var(--primary-color);
+    }
+    #bottom {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing);
+    }
+    .column {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      padding: var(--spacing);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+    .column h2 {
+      margin-bottom: var(--spacing);
+      color: var(--secondary-color);
+      font-size: 1.3rem;
+    }
+    #timer {
+      font-size: 2.2rem;
+      font-weight: bold;
+    }
+    #highscore-list {
+      list-style: none;
+      padding: 0;
+    }
+    #highscore-list li {
+      display: flex;
+      justify-content: space-between;
+      font-size: 1rem;
+      padding: 0.25rem 0;
+    }
+    footer {
+      text-align: center;
+      margin-top: auto;
+      padding: var(--spacing);
+      color: #777;
+      font-size: 0.85rem;
+    }
+
     #voice-settings {
       text-align: center;
       margin-bottom: var(--spacing);
@@ -45,7 +145,8 @@ e: none; padding: 0; }
   <div class="container">
     <h1 id="title">Skriv ordet!</h1>
     <div id="controls">
-      <button id="playBtn">🔊</button>
+      <!-- Knappen viser nå HINT AV / HINT PÅ -->
+      <button id="playBtn">Hint av</button>
       <input type="text" id="answer" placeholder="Skriv ordet her" autocomplete="off" />
       <button id="submitBtn">Sjekk</button>
     </div>
@@ -121,6 +222,9 @@ e: none; padding: 0; }
     let answered = false, gameStarted = false;
     let highscores = [], timerInterval;
 
+    // Hint av/på-styring
+    let hintOn = false;
+
     const playBtn = document.getElementById('playBtn');
     const submitBtn = document.getElementById('submitBtn');
     const answerInput = document.getElementById('answer');
@@ -190,6 +294,7 @@ e: none; padding: 0; }
     }
 
     // Leser ord/hint avhengig av innstilling
+    // Nå: HINT FØR ORD
     function speakWordWithHint() {
       if (!currentWord) return;
       if (voiceMode === 'none') return; // ikke les noe
@@ -201,8 +306,8 @@ e: none; padding: 0; }
         // Bare hintet
         speak(lenText);
       } else {
-        // Ord + hint
-        speak(`${currentWord}. ${lenText}.`);
+        // Hint først, så ordet
+        speak(`${lenText}. ${currentWord}.`);
       }
     }
 
@@ -221,8 +326,12 @@ e: none; padding: 0; }
       if (!pool.length) return;
       currentWord = pool[Math.floor(Math.random() * pool.length)];
 
-      // Oppdater synlig hint
-      hintEl.textContent = `${currentWord.length} bokstaver`;
+      // Oppdater synlig hint avhengig av hintOn
+      if (hintOn) {
+        hintEl.textContent = `${currentWord.length} bokstaver`;
+      } else {
+        hintEl.textContent = '--';
+      }
     }
 
     function renderHighscores() {
@@ -328,10 +437,21 @@ e: none; padding: 0; }
     }
 
     // Event listeners
+
+    // Knappen brukes nå til å slå HINT AV/PÅ
     playBtn.addEventListener('click', () => {
-      startGame();
-      speakWordWithHint();
-      answerInput.focus();
+      hintOn = !hintOn;
+      playBtn.textContent = hintOn ? 'Hint på' : 'Hint av';
+
+      // Oppdater hint for gjeldende ord
+      if (currentWord) {
+        hintEl.textContent = hintOn ? `${currentWord.length} bokstaver` : '--';
+      }
+
+      // Start spillet første gang hvis det ikke er i gang
+      if (!gameStarted) {
+        startGame();
+      }
     });
 
     submitBtn.addEventListener('click', checkAnswer);
